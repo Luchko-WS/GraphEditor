@@ -1,0 +1,683 @@
+<!--
+  Copyright (c) 2006-2013, JGraph Ltd
+  
+  Control example for mxGraph. This example demonstrates adding
+  controls to specific cells in a graph.
+-->
+<html>
+<head>
+	<title>Control example for mxGraph</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = 'src';
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="src/js/mxClient.js"></script>
+
+	<!-- Example code -->
+	<script type="text/javascript">
+	
+		const GRID_IMAGE_URL = 'images/grid.gif';
+	
+		//
+		//
+		//
+		//
+		//anchors
+		//
+		//
+		//
+		//
+		// Overridden to define per-shape connection points
+		mxGraph.prototype.getAllConnectionConstraints = function(terminal, source)
+		{
+			if (terminal != null && terminal.shape != null)
+			{
+				if (terminal.shape.stencil != null)
+				{
+					if (terminal.shape.stencil != null)
+					{
+						return terminal.shape.stencil.constraints;
+					}
+				}
+				else if (terminal.shape.constraints != null)
+				{
+					return terminal.shape.constraints;
+				}
+			}
+	
+			return null;
+		};
+	
+		// Defines the default constraints for all shapes
+		mxShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
+										 new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+										 new mxConnectionConstraint(new mxPoint(0.75, 0), true),
+		        	              		 new mxConnectionConstraint(new mxPoint(0, 0.25), true),
+		        	              		 new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+		        	              		 new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+		        	            		 new mxConnectionConstraint(new mxPoint(1, 0.25), true),
+		        	            		 new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+		        	            		 new mxConnectionConstraint(new mxPoint(1, 0.75), true),
+		        	            		 new mxConnectionConstraint(new mxPoint(0.25, 1), true),
+		        	            		 new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+		        	            		 new mxConnectionConstraint(new mxPoint(0.75, 1), true)];
+		
+		// Edges have no connection points
+		mxPolyline.prototype.constraints = null;
+		//
+		//
+		//
+		//
+		//
+		
+		
+		// Program starts here. Creates a sample graph in the
+		// DOM node with the specified ID. This function is invoked
+		// from the onLoad event handler of the document (see below).
+		function main(container)
+		{
+			// Checks if the browser is supported
+			if (!mxClient.isBrowserSupported())
+			{
+				// Displays an error message if the browser is not supported.
+				mxUtils.error('Browser is not supported!', 200, false);
+			}
+			else
+			{
+				// Creates the graph inside the given container
+				var graph = new mxGraph(container);
+				graph.setPanning(true);
+				graph.graphHandler.scaleGrid = true;
+				graph.setConnectable(true);
+				// Specifies the default edge style
+				graph.getStylesheet().getDefaultEdgeStyle()['edgeStyle'] = 'orthogonalEdgeStyle';			
+				// Disables the built-in context menu
+				mxEvent.disableContextMenu(container);
+				console.dir(graph);
+				
+				configureCopyAndPaste(mxEvent, graph);
+				configureDynamicGrid(container, mxGraphView, graph, document);
+				
+				// Specifies the URL and size of the new control
+				var deleteImage = new mxImage('images/delete.gif', 16, 16);
+
+				// Overridden to add an additional control to the state at creation time
+				mxCellRendererCreateControl = mxCellRenderer.prototype.createControl;
+				mxCellRenderer.prototype.createControl = function(state)
+				{
+					mxCellRendererCreateControl.apply(this, arguments);
+					
+					var graph = state.view.graph;
+					
+					if (graph.getModel().isVertex(state.cell))
+					{
+						if (state.deleteControl == null)
+						{
+							var b = new mxRectangle(0, 0, deleteImage.width, deleteImage.height);
+							state.deleteControl = new mxImageShape(b, deleteImage.src);
+							state.deleteControl.dialect = graph.dialect;
+							state.deleteControl.preserveImageAspect = false;
+							
+							this.initControl(state, state.deleteControl, false, function (evt)
+							{
+								if (graph.isEnabled())
+								{
+									graph.removeCells([state.cell]);
+									mxEvent.consume(evt);
+								}
+							});
+						}
+					}
+					else if (state.deleteControl != null)
+					{
+						state.deleteControl.destroy();
+						state.deleteControl = null;
+					}
+				};
+				
+				// Helper function to compute the bounds of the control
+				var getDeleteControlBounds = function(state)
+				{
+					if (state.deleteControl != null)
+					{
+						var oldScale = state.deleteControl.scale;
+						var w = state.deleteControl.bounds.width / oldScale;
+						var h = state.deleteControl.bounds.height / oldScale;
+						var s = state.view.scale;			
+
+						return (state.view.graph.getModel().isEdge(state.cell)) ? 
+							new mxRectangle(state.x + state.width / 2 - w / 2 * s,
+								state.y + state.height / 2 - h / 2 * s, w * s, h * s)
+							: new mxRectangle(state.x + state.width - w * s,
+								state.y, w * s, h * s);
+					}
+					
+					return null;
+				};
+				
+				// Overridden to update the scale and bounds of the control
+				mxCellRendererRedrawControl = mxCellRenderer.prototype.redrawControl;
+				mxCellRenderer.prototype.redrawControl = function(state)
+				{
+					mxCellRendererRedrawControl.apply(this, arguments);
+					
+					if (state.deleteControl != null)
+					{
+						var bounds = getDeleteControlBounds(state);
+						var s = state.view.scale;
+						
+						if (state.deleteControl.scale != s || !state.deleteControl.bounds.equals(bounds))
+						{
+							state.deleteControl.bounds = bounds;
+							state.deleteControl.scale = s;
+							state.deleteControl.redraw();
+						}
+					}
+				};
+				
+				// Overridden to remove the control if the state is destroyed
+				mxCellRendererDestroy = mxCellRenderer.prototype.destroy;
+				mxCellRenderer.prototype.destroy = function(state)
+				{
+					mxCellRendererDestroy.apply(this, arguments);
+
+					if (state.deleteControl != null)
+					{
+						state.deleteControl.destroy();
+						state.deleteControl = null;
+					}
+				};
+
+				// Uncomment the following if you want the container
+				// to fit the size of the graph
+				//graph.setResizeContainer(true);
+				
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				setAnchors(graph);
+				
+				// Gets the default parent for inserting new cells. This
+				// is normally the first child of the root (ie. layer 0).
+				var parent = graph.getDefaultParent();
+								
+				// Adds cells to the model in a single step
+				graph.getModel().beginUpdate();
+				try
+				{
+					var v1 = graph.insertVertex(parent, null, '1,', 20, 20, 80, 30);
+					var v2 = graph.insertVertex(parent, null, '2!', 200, 150, 80, 30);
+					var v3 = graph.insertVertex(parent, null, '3!', 300, 250, 80, 30);
+					var v4 = graph.insertVertex(parent, null, '4!', 200, 250, 80, 30);
+					var v5 = graph.insertVertex(parent, null, '5!', 100, 50, 80, 30);
+					var e1 = graph.insertEdge(parent, null, '', v1, v2);
+					var e2 = graph.insertEdge(parent, null, '', v2, v3);
+					var e3 = graph.insertEdge(parent, null, '', v3, v4);
+					var e3 = graph.insertEdge(parent, null, '', v4, v5);
+				}
+				finally
+				{
+					// Updates the display
+					graph.getModel().endUpdate();
+				}
+				
+				graph.centerZoom = true;
+				
+				document.body.appendChild(mxUtils.button('+', function()
+				{
+					graph.zoomIn();
+				}));
+				
+				document.body.appendChild(mxUtils.button('-', function()
+				{
+					graph.zoomOut();
+				}));
+				
+				document.body.appendChild(mxUtils.button('0', function()
+				{
+					graph.zoomActual();
+				}));
+				
+				
+				
+				// Enables rubberband selection
+				new mxRubberband(graph);
+				
+				function setAnchors(graph){
+					// Enables connect preview for the default edge style
+					graph.connectionHandler.createEdgeState = function(me)
+					{
+						var edge = graph.createEdge(null, null, null, null, null);		
+						return new mxCellState(this.graph.view, edge, this.graph.getCellStyle(edge));
+					};
+				}
+				
+				//configure copy/paste
+				function configureCopyAndPaste(mxEvent, graph){
+					// Public helper method for shared clipboard.
+					mxClipboard.cellsToString = function(cells)
+					{
+						var codec = new mxCodec();
+						var model = new mxGraphModel();
+						var parent = model.getChildAt(model.getRoot(), 0);
+						
+						for (var i = 0; i < cells.length; i++)
+						{
+							model.add(parent, cells[i]);
+						}
+
+						return mxUtils.getXml(codec.encode(model));
+					};
+
+					// Focused but invisible textarea during control or meta key events
+					var textInput = document.createElement('textarea');
+					mxUtils.setOpacity(textInput, 0);
+					textInput.style.width = '1px';
+					textInput.style.height = '1px';
+					var restoreFocus = false;
+					var gs = graph.gridSize;
+					var lastPaste = null;
+					var dx = 0;
+					var dy = 0;
+
+					// Workaround for no copy event in IE/FF if empty
+					textInput.value = ' ';
+				
+					// Shows a textare when control/cmd is pressed to handle native clipboard actions
+					mxEvent.addListener(document, 'keydown', function(evt)
+					{
+						// No dialog visible
+						var source = mxEvent.getSource(evt);
+						
+						if (graph.isEnabled() && !graph.isMouseDown && !graph.isEditing() && source.nodeName != 'INPUT')
+						{
+							if (evt.keyCode == 224 /* FF */ || (!mxClient.IS_MAC && evt.keyCode == 17 /* Control */) || (mxClient.IS_MAC && evt.keyCode == 91 /* Meta */))
+							{
+								// Cannot use parentNode for check in IE
+								if (!restoreFocus)
+								{
+									// Avoid autoscroll but allow handling of events
+									textInput.style.position = 'absolute';
+									textInput.style.left = (graph.container.scrollLeft + 10) + 'px';
+									textInput.style.top = (graph.container.scrollTop + 10) + 'px';
+									graph.container.appendChild(textInput);
+
+									restoreFocus = true;
+									textInput.focus();
+									textInput.select();
+								}
+							}
+						}
+					});
+					
+					// Restores focus on graph container and removes text input from DOM
+					mxEvent.addListener(document, 'keyup', function(evt)
+					{
+						if (restoreFocus && (evt.keyCode == 224 /* FF */ || evt.keyCode == 17 /* Control */ ||
+							evt.keyCode == 91 /* Meta */))
+						{
+							restoreFocus = false;
+							
+							if (!graph.isEditing())
+							{
+								graph.container.focus();
+							}
+							
+							textInput.parentNode.removeChild(textInput);
+						}
+					});
+					
+					// Inserts the XML for the given cells into the text input for copy
+					var copyCells = function(graph, cells)
+					{
+						if (cells.length > 0)
+						{
+							var clones = graph.cloneCells(cells);
+							
+							// Checks for orphaned relative children and makes absolute
+							for (var i = 0; i < clones.length; i++)
+							{
+								var state = graph.view.getState(cells[i]);
+								
+								if (state != null)
+								{
+									var geo = graph.getCellGeometry(clones[i]);
+									
+									if (geo != null && geo.relative)
+									{
+										geo.relative = false;
+										geo.x = state.x / state.view.scale - state.view.translate.x;
+										geo.y = state.y / state.view.scale - state.view.translate.y;
+									}
+								}
+							}
+							
+							textInput.value = mxClipboard.cellsToString(clones);
+						}
+						
+						textInput.select();
+						lastPaste = textInput.value;
+					};
+					
+					// Handles copy event by putting XML for current selection into text input
+					mxEvent.addListener(textInput, 'copy', mxUtils.bind(this, function(evt)
+					{
+						if (graph.isEnabled() && !graph.isSelectionEmpty())
+						{
+							copyCells(graph, mxUtils.sortCells(graph.model.getTopmostCells(graph.getSelectionCells())));
+							dx = 0;
+							dy = 0;
+						}
+					}));
+					
+					// Handles cut event by removing cells putting XML into text input
+					mxEvent.addListener(textInput, 'cut', mxUtils.bind(this, function(evt)
+					{
+						if (graph.isEnabled() && !graph.isSelectionEmpty())
+						{
+							copyCells(graph, graph.removeCells());
+							dx = -gs;
+							dy = -gs;
+						}
+					}));
+					
+					// Merges XML into existing graph and layers
+					var importXml = function(xml, dx, dy)
+					{
+						dx = (dx != null) ? dx : 0;
+						dy = (dy != null) ? dy : 0;
+						var cells = []
+
+						try
+						{
+							var doc = mxUtils.parseXml(xml);
+							var node = doc.documentElement;
+							
+							if (node != null)
+							{
+								var model = new mxGraphModel();
+								var codec = new mxCodec(node.ownerDocument);
+								codec.decode(node, model);
+								
+								var childCount = model.getChildCount(model.getRoot());
+								var targetChildCount = graph.model.getChildCount(graph.model.getRoot());
+								
+								// Merges existing layers and adds new layers
+								graph.model.beginUpdate();
+								try
+								{
+									for (var i = 0; i < childCount; i++)
+									{
+										var parent = model.getChildAt(model.getRoot(), i);
+										
+										// Adds cells to existing layers if not locked
+										if (targetChildCount > i)
+										{
+											// Inserts into active layer if only one layer is being pasted
+											var target = (childCount == 1) ? graph.getDefaultParent() : graph.model.getChildAt(graph.model.getRoot(), i);
+											
+											if (!graph.isCellLocked(target))
+											{								
+												var children = model.getChildren(parent);
+												cells = cells.concat(graph.importCells(children, dx, dy, target));
+											}
+										}
+										else
+										{
+											// Delta is non cascading, needs separate move for layers
+											parent = graph.importCells([parent], 0, 0, graph.model.getRoot())[0];
+											var children = graph.model.getChildren(parent);
+											graph.moveCells(children, dx, dy);
+											cells = cells.concat(children);
+										}
+									}
+								}
+								finally
+								{
+									graph.model.endUpdate();
+								}
+							}
+						}
+						catch (e)
+						{
+							alert(e);
+							throw e;
+						}
+						
+						return cells;
+					};
+					
+					// Parses and inserts XML into graph
+					var pasteText = function(text)
+					{
+						var xml = mxUtils.trim(text);
+						var x = graph.container.scrollLeft / graph.view.scale - graph.view.translate.x;
+						var y = graph.container.scrollTop / graph.view.scale - graph.view.translate.y;
+						
+						if (xml.length > 0)
+						{
+							if (lastPaste != xml)
+							{
+								lastPaste = xml;
+								dx = 0;
+								dy = 0;
+							}
+							else
+							{
+								dx += gs;
+								dy += gs;
+							}
+									
+							// Standard paste via control-v
+							if (xml.substring(0, 14) == '<mxGraphModel>')
+							{
+								graph.setSelectionCells(importXml(xml, dx, dy));
+								graph.scrollCellToVisible(graph.getSelectionCell());
+							}
+						}
+					};
+					
+					// Cross-browser function to fetch text from paste events
+					var extractGraphModelFromEvent = function(evt)
+					{
+						var data = null;
+						
+						if (evt != null)
+						{
+							var provider = (evt.dataTransfer != null) ? evt.dataTransfer : evt.clipboardData;
+							
+							if (provider != null)
+							{
+								if (document.documentMode == 10 || document.documentMode == 11)
+								{
+									data = provider.getData('Text');
+								}
+								else
+								{
+									data = (mxUtils.indexOf(provider.types, 'text/html') >= 0) ? provider.getData('text/html') : null;
+								
+									if (mxUtils.indexOf(provider.types, 'text/plain' && (data == null || data.length == 0)))
+									{
+										data = provider.getData('text/plain');
+									}
+								}		
+							}
+						}
+						
+						return data;
+					};
+
+					// Handles paste event by parsing and inserting XML
+					mxEvent.addListener(textInput, 'paste', function(evt)
+					{
+						// Clears existing contents before paste - should not be needed
+						// because all text is selected, but doesn't hurt since the
+						// actual pasting of the new text is delayed in all cases.
+						textInput.value = '';
+
+						if (graph.isEnabled())
+						{
+							var xml = extractGraphModelFromEvent(evt);
+
+							if (xml != null && xml.length > 0)
+							{
+								pasteText(xml);
+							}
+							else
+							{
+								// Timeout for new value to appear
+								window.setTimeout(mxUtils.bind(this, function()
+								{
+									pasteText(textInput.value);
+								}), 0);
+							}
+						}
+			
+						textInput.select();
+					});
+
+				}
+			
+				function configureDynamicGrid(container, mxGraphView, graph, document)
+				{
+					try
+					{
+						var canvas = document.createElement('canvas');
+						canvas.style.position = 'absolute';
+						canvas.style.top = '0px';
+						canvas.style.left = '0px';
+						canvas.style.zIndex = -1;
+						graph.container.appendChild(canvas);
+						
+						var ctx = canvas.getContext('2d');
+						
+						// Modify event filtering to accept canvas as container
+						var mxGraphViewIsContainerEvent = mxGraphView.prototype.isContainerEvent;
+						mxGraphView.prototype.isContainerEvent = function(evt)
+						{
+							return mxGraphViewIsContainerEvent.apply(this, arguments) ||
+								mxEvent.getSource(evt) == canvas;
+						};
+						
+						var s = 0;
+						var gs = 0;
+						var tr = new mxPoint();
+						var w = 0;
+						var h = 0;
+
+						function repaintGrid()
+						{
+							if (ctx != null)
+							{
+								var bounds = graph.getGraphBounds();
+								var width = Math.max(bounds.x + bounds.width, graph.container.clientWidth);
+								var height = Math.max(bounds.y + bounds.height, graph.container.clientHeight);
+								var sizeChanged = width != w || height != h;
+								
+								if (graph.view.scale != s || graph.view.translate.x != tr.x || graph.view.translate.y != tr.y ||
+									gs != graph.gridSize || sizeChanged)
+								{
+									tr = graph.view.translate.clone();
+									s = graph.view.scale;
+									gs = graph.gridSize;
+									w = width;
+									h = height;
+									
+									// Clears the background if required
+									if (!sizeChanged)
+									{
+										ctx.clearRect(0, 0, w, h);
+									}
+									else
+									{
+										canvas.setAttribute('width', w);
+										canvas.setAttribute('height', h);
+									}
+	
+									var tx = tr.x * s;
+									var ty = tr.y * s;
+	
+									// Sets the distance of the grid lines in pixels
+									var minStepping = graph.gridSize;
+									var stepping = minStepping * s;
+	
+									if (stepping < minStepping)
+									{
+										var count = Math.round(Math.ceil(minStepping / stepping) / 2) * 2;
+										stepping = count * stepping;
+									}
+	
+									var xs = Math.floor((0 - tx) / stepping) * stepping + tx;
+									var xe = Math.ceil(w / stepping) * stepping;
+									var ys = Math.floor((0 - ty) / stepping) * stepping + ty;
+									var ye = Math.ceil(h / stepping) * stepping;
+	
+									xe += Math.ceil(stepping);
+									ye += Math.ceil(stepping);
+	
+									var ixs = Math.round(xs);
+									var ixe = Math.round(xe);
+									var iys = Math.round(ys);
+									var iye = Math.round(ye);
+	
+									// Draws the actual grid
+									ctx.strokeStyle = '#f6f6f6';
+									ctx.beginPath();
+									
+									for (var x = xs; x <= xe; x += stepping)
+									{
+										x = Math.round((x - tx) / stepping) * stepping + tx;
+										var ix = Math.round(x);
+										
+										ctx.moveTo(ix + 0.5, iys + 0.5);
+										ctx.lineTo(ix + 0.5, iye + 0.5);
+									}
+	
+									for (var y = ys; y <= ye; y += stepping)
+									{
+										y = Math.round((y - ty) / stepping) * stepping + ty;
+										var iy = Math.round(y);
+										
+										ctx.moveTo(ixs + 0.5, iy + 0.5);
+										ctx.lineTo(ixe + 0.5, iy + 0.5);
+									}
+	
+									ctx.closePath();
+									ctx.stroke();
+								}
+							}
+						};
+					}
+					catch (e)
+					{
+						mxLog.show();
+						mxLog.debug('Using background image');
+						
+						container.style.backgroundImage = 'url('+ GRID_IMAGE_URL +')';
+					}
+					
+					var mxGraphViewValidateBackground = mxGraphView.prototype.validateBackground;
+					mxGraphView.prototype.validateBackground = function()
+					{
+						mxGraphViewValidateBackground.apply(this, arguments);
+						repaintGrid();
+					};
+				};
+				
+			}
+		};
+	</script>
+</head>
+
+<!-- Page passes the container for the graph to the program -->
+<body onload="main(document.getElementById('graphContainer'))">
+
+	<!-- Creates a container for the graph with a grid wallpaper -->
+	<div id="graphContainer"
+		style="overflow:auto;width:100%;height:90%;cursor:default;">
+	</div>
+</body>
+</html>
