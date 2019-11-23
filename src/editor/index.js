@@ -11,6 +11,7 @@ var runApp = function(container, document) {
         try {
             runConfigurationPlugin(configurationPlugin(graph));
             runZoomPlugin(zoomPlugin(mxUtils, graph));
+            runToolbarPluginPlugin(toolbarPlugin(mxClient, mxUtils, graph));
         } catch (error) {
             console.error(error);
             return;
@@ -18,10 +19,10 @@ var runApp = function(container, document) {
 
         // Gets the default parent for inserting new cells. This
         // is normally the first child of the root (ie. layer 0).
-        var parent = graph.getDefaultParent();
+        //var parent = graph.getDefaultParent();
 
         // Adds cells to the model in a single step
-        graph.getModel().beginUpdate();
+        /*graph.getModel().beginUpdate();
         try {
             var v1 = graph.insertVertex(parent, null, '1,', 20, 20, 80, 30);
             var v2 = graph.insertVertex(parent, null, '2', 200, 150, 80, 30);
@@ -34,7 +35,7 @@ var runApp = function(container, document) {
             var e4 = graph.insertEdge(parent, null, '', v4, v5);
         } finally {
             graph.getModel().endUpdate();
-        }
+        }*/
 
         function runConfigurationPlugin(configurationPlugin) {
             configurationPlugin.configureControls(mxCellRenderer);
@@ -49,6 +50,10 @@ var runApp = function(container, document) {
             document.body.appendChild(zoomPlugin.getZoomInButton('+'));
             document.body.appendChild(zoomPlugin.getZoomOutButton('-'));
             document.body.appendChild(zoomPlugin.getZoomActualButton('0'));
+        }
+
+        function runToolbarPluginPlugin(toolbarPlugin) {
+            toolbarPlugin.createToolbar();
         }
     }
 };
