@@ -1,17 +1,19 @@
-var runApp = function(container, document) {
+var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarContainer) {
     if (!mxClient.isBrowserSupported()) {
         mxUtils.error('Browser is not supported!', 200, false);
     } else {
-        var graph = new mxGraph(container);
+        var graph = new mxGraph(graphContainer);
         graph.setPanning(true);
-        mxEvent.disableContextMenu(container);
+        mxEvent.disableContextMenu(graphContainer);
         // Enables rubberband selection
         new mxRubberband(graph);
 
         try {
             runConfigurationPlugin(configurationPlugin(graph));
-            runZoomPlugin(zoomPlugin(mxUtils, graph));
             runToolbarPluginPlugin(toolbarPlugin(mxClient, mxUtils, graph));
+            runZoomPlugin(zoomPlugin(mxUtils, graph));
+            runUndoRedoPlugin(undoRedoPlugin(graph));
+            addDeleteButton(mxEvent); //TODO: remove this later!
         } catch (error) {
             console.error(error);
             return;
@@ -41,19 +43,44 @@ var runApp = function(container, document) {
             configurationPlugin.configureControls(mxCellRenderer);
             configurationPlugin.configureConnections(mxGraph, mxShape, mxPolyline);
             configurationPlugin.configureCopyAndPaste(mxEvent);
-            configurationPlugin.configureDynamicGrid(container, mxGraphView, document);
+            configurationPlugin.configureDynamicGrid(graphContainer, mxGraphView, document);
 
+        }
+
+        function runToolbarPluginPlugin(toolbarPlugin) {
+            toolbarPlugin.createToolbar(shapesToolBarContainer);
         }
 
         function runZoomPlugin(zoomPlugin) {
             zoomPlugin.setCenterZoom(graph);
-            document.body.appendChild(zoomPlugin.getZoomInButton('+'));
-            document.body.appendChild(zoomPlugin.getZoomOutButton('-'));
-            document.body.appendChild(zoomPlugin.getZoomActualButton('0'));
+            commandToolBarContainer.appendChild(zoomPlugin.getZoomInButton('+'));
+            commandToolBarContainer.appendChild(zoomPlugin.getZoomOutButton('-'));
+            commandToolBarContainer.appendChild(zoomPlugin.getZoomActualButton('0'));
         }
 
-        function runToolbarPluginPlugin(toolbarPlugin) {
-            toolbarPlugin.createToolbar();
+        function runUndoRedoPlugin(undoRedoPlugin) {
+            undoRedoPlugin.init();
+            commandToolBarContainer.appendChild(undoRedoPlugin.getUndoButton('undo'));
+            commandToolBarContainer.appendChild(undoRedoPlugin.getRedoButton('redo'));
+        }
+
+        //TODO: move to plugin
+        function addDeleteButton(mxEvent) {
+            var deleteFunc = function() {
+                graph.removeCells();
+            };
+
+            commandToolBarContainer.appendChild(mxUtils.button('Delete', deleteFunc));
+            mxEvent.addListener(document, 'keydown', function(evt) { //change event listener target
+                // No dialog visible
+                var source = mxEvent.getSource(evt);
+
+                if (graph.isEnabled() && !graph.isMouseDown && !graph.isEditing() && source.nodeName != 'INPUT') {
+                    if (evt.keyCode == 46 /* Delete*/ ) {
+                        deleteFunc();
+                    }
+                }
+            });
         }
     }
 };

@@ -9,14 +9,20 @@
     <script type="text/javascript" src="src/editor/plugins/configurationPlugin/copyAndPasteConfiguration.js"></script>
     <script type="text/javascript" src="src/editor/plugins/configurationPlugin/dynamicGridConfiguration.js"></script>
     <script type="text/javascript" src="src/editor/plugins/configurationPlugin/configurationPlugin.js"></script>
-    <script type="text/javascript" src="src/editor/plugins/zoomPlugin.js"></script>
     <script type="text/javascript" src="src/editor/plugins/toolbarPlugin.js"></script>
+    <script type="text/javascript" src="src/editor/plugins/zoomPlugin.js"></script>
+    <script type="text/javascript" src="src/editor/plugins/undoRedoPlugin.js"></script>
     <script type="text/javascript" src="src/editor/index.js"></script>
 </head>
 
-<body onload="runApp(document.getElementById('graphContainer'), document)">
-    <div id="graphContainer" style="overflow:auto;width:100%;height:90%;cursor:default;">
-    </div>
+<body onload="runApp(
+        document.getElementById('graphContainer'),
+        document.getElementById('shapesToolBarContainer'),
+        document.getElementById('commandToolBarContainer')
+    )">
+    <div id="graphContainer" style="overflow:auto;width:100%;height:90%;cursor:default;"></div>
+    <div id="shapesToolBarContainer"></div>
+    <div id="commandToolBarContainer"></div>
 </body>
 
 </html>

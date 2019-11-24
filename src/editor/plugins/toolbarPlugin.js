@@ -1,18 +1,10 @@
 var toolbarPlugin = function(mxClient, mxUtils, graph) {
     return {
-        createToolbar: function() {
-            // Creates the div for the toolbar
-            var tbContainer = document.createElement('div');
-            tbContainer.style.position = 'absolute';
-            tbContainer.style.overflow = 'hidden';
-            tbContainer.style.padding = '2px';
-            tbContainer.style.left = '0px';
-            tbContainer.style.top = '0px';
-            tbContainer.style.width = '24px';
-            tbContainer.style.bottom = '0px';
-            tbContainer.style.backgroundColor = 'gray';
-
-            document.body.appendChild(tbContainer);
+        createToolbar: function(tbContainer) {
+            if (!tbContainer) {
+                console.error('Toolbar container is not created');
+                return;
+            }
 
             // Creates new toolbar without event processing
             var toolbar = new mxToolbar(tbContainer);
@@ -25,10 +17,12 @@ var toolbarPlugin = function(mxClient, mxUtils, graph) {
             };
 
             addVertex('images/rectangle.gif', 100, 40, '');
-            //addVertex('editors/images/rounded.gif', 100, 40, 'shape=rounded');
+            addVertex('images/rounded.gif', 100, 40, 'shape=rounded');
             addVertex('images/ellipse.gif', 40, 40, 'shape=ellipse');
-            //addVertex('editors/images/rhombus.gif', 40, 40, 'shape=rhombus');
-            //addVertex('editors/images/triangle.gif', 40, 40, 'shape=triangle');
+            addVertex('images/rhombus.gif', 40, 40, 'shape=rhombus');
+            addVertex('images/triangle.gif', 40, 40, 'shape=triangle');
+            addVertex('images/hexagon.gif', 40, 40, 'shape=hexagon');
+            addVertex('images/cloud.gif', 40, 40, 'shape=cloud');
             //addVertex('editors/images/cylinder.gif', 40, 40, 'shape=cylinder');
             //addVertex('editors/images/actor.gif', 30, 40, 'shape=actor');
 
@@ -42,6 +36,47 @@ var toolbarPlugin = function(mxClient, mxUtils, graph) {
                     var vertex = graph.getModel().cloneCell(prototype);
                     vertex.geometry.x = x;
                     vertex.geometry.y = y;
+
+                    /*
+                        STYLES
+
+                        dx: 0,
+                        dy: 0,
+                        scale: 1,
+                        alpha: 1,
+                        fillAlpha: 1,
+                        strokeAlpha: 1,
+                        fillColor: null,
+                        gradientFillAlpha: 1,
+                        gradientColor: null,
+                        gradientAlpha: 1,
+                        gradientDirection: null,
+                        strokeColor: null,
+                        strokeWidth: 1,
+                        dashed: false,
+                        dashPattern: '3 3',
+                        fixDash: false,
+                        lineCap: 'flat',
+                        lineJoin: 'miter',
+                        miterLimit: 10,
+                        fontColor: '#000000',
+                        fontBackgroundColor: null,
+                        fontBorderColor: null,
+                        fontSize: mxConstants.DEFAULT_FONTSIZE,
+                        fontFamily: mxConstants.DEFAULT_FONTFAMILY,
+                        fontStyle: 0,
+                        shadow: false,
+                        shadowColor: mxConstants.SHADOWCOLOR,
+                        shadowAlpha: mxConstants.SHADOW_OPACITY,
+                        shadowDx: mxConstants.SHADOW_OFFSET_X,
+                        shadowDy: mxConstants.SHADOW_OFFSET_Y,
+                        rotation: 0,
+                        rotationCx: 0,
+                        rotationCy: 0
+                    */
+
+                    //var shape = vertex.getStyle('shape');
+                    //vertex.setStyle(shape + ';fillColor=yellow;strokeColor=black');
 
                     graph.addCell(vertex);
                     graph.setSelectionCell(vertex);

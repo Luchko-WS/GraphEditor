@@ -1,7 +1,7 @@
 var configureControls = function(graph) {
     return function(mxCellRenderer) {
         // Specifies the URL and size of the new control
-        var deleteImage = new mxImage('images/delete.gif', 10, 10);
+        var deleteImage = new mxImage('images/delete2.png', 10, 10);
 
         // Overridden to add an additional control to the state at creation time
         mxCellRendererCreateControl = mxCellRenderer.prototype.createControl;
