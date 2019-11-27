@@ -1,0 +1,76 @@
+.panel.toolbar-panel {
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(.0, 0, 0, .05);
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .05);
+    margin-bottom: 5px;
+}
+
+.container.grapheditor-container {
+    margin: 0px;
+    padding: 20px;
+    width: 100%;
+}
+
+.toolbar-panel .mxToolbarMode {
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    padding: 2px;
+    border: 1px solid black;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .05);
+    background-color: white;
+}
+
+.toolbar-panel .mxToolbarMode:hover {
+    border: 2px solid blue;
+    box-shadow: 1px 1px 1px 1px rgba(63, 13, 138, 0.285);
+    background-color: lightblue;
+}
+
+.toolbar-panel button {
+    border-radius: 4px;
+    margin: 2px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    width: 32px;
+    height: 32px;
+    padding: 2px;
+    border: 1px solid black;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .05);
+    background-color: white;
+}
+
+.toolbar-panel button:hover {
+    border: 2px solid blue;
+    box-shadow: 1px 1px 1px 1px rgba(63, 13, 138, 0.285);
+    background-color: lightblue;
+}
+
+.toolbar-panel .panel-heading {
+    padding: 0px;
+}
+
+.graph-layer {
+    border-radius: 4px;
+    border: 1px solid black;
+}
+
+.data-layer {
+    border-radius: 4px;
+    border: 1px solid black;
+}
+
+.outline-container {
+    z-index: 1;
+    position: absolute;
+    overflow: hidden;
+    top: 5px;
+    right: 5px;
+    width: 200px;
+    height: 140px;
+    background: white;
+    border-style: solid;
+    border-color: lightgray;
+}

@@ -1,4 +1,4 @@
-var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarContainer) {
+var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarContainer, outlineContainer) {
     if (!mxClient.isBrowserSupported()) {
         mxUtils.error('Browser is not supported!', 200, false);
     } else {
@@ -13,6 +13,7 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
             runToolbarPluginPlugin(toolbarPlugin(mxClient, mxUtils, graph));
             runZoomPlugin(zoomPlugin(mxUtils, graph));
             runUndoRedoPlugin(undoRedoPlugin(graph));
+            runOutlinePlugin(outlinePlugin(graph));
             addDeleteButton(mxEvent); //TODO: remove this later!
         } catch (error) {
             console.error(error);
@@ -24,6 +25,8 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
         //var parent = graph.getDefaultParent();
 
         // Adds cells to the model in a single step
+        graph.getModel().beginUpdate();
+
         /*graph.getModel().beginUpdate();
         try {
             var v1 = graph.insertVertex(parent, null, '1,', 20, 20, 80, 30);
@@ -38,6 +41,8 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
         } finally {
             graph.getModel().endUpdate();
         }*/
+
+        graph.getModel().endUpdate();
 
         function runConfigurationPlugin(configurationPlugin) {
             configurationPlugin.configureControls(mxCellRenderer);
@@ -62,6 +67,10 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
             undoRedoPlugin.init();
             commandToolBarContainer.appendChild(undoRedoPlugin.getUndoButton('undo'));
             commandToolBarContainer.appendChild(undoRedoPlugin.getRedoButton('redo'));
+        }
+
+        function runOutlinePlugin(outlinePlugin) {
+            outlinePlugin.init(outlineContainer);
         }
 
         //TODO: move to plugin

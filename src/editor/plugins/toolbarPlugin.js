@@ -17,12 +17,11 @@ var toolbarPlugin = function(mxClient, mxUtils, graph) {
             };
 
             addVertex('images/rectangle.gif', 100, 40, '');
-            addVertex('images/rounded.gif', 100, 40, 'shape=rounded');
-            addVertex('images/ellipse.gif', 40, 40, 'shape=ellipse');
+            addVertex('images/ellipse.gif', 100, 40, 'shape=ellipse');
             addVertex('images/rhombus.gif', 40, 40, 'shape=rhombus');
             addVertex('images/triangle.gif', 40, 40, 'shape=triangle');
-            addVertex('images/hexagon.gif', 40, 40, 'shape=hexagon');
-            addVertex('images/cloud.gif', 40, 40, 'shape=cloud');
+            addVertex('images/hexagon.gif', 100, 40, 'shape=hexagon');
+            addVertex('images/cloud.gif', 100, 40, 'shape=cloud');
             //addVertex('editors/images/cylinder.gif', 40, 40, 'shape=cylinder');
             //addVertex('editors/images/actor.gif', 30, 40, 'shape=actor');
 
@@ -31,8 +30,6 @@ var toolbarPlugin = function(mxClient, mxUtils, graph) {
                 // the graph. The cell argument points to the cell under
                 // the mousepointer if there is one.
                 var funct = function(graph, evt, cell, x, y) {
-                    graph.stopEditing(false);
-
                     var vertex = graph.getModel().cloneCell(prototype);
                     vertex.geometry.x = x;
                     vertex.geometry.y = y;
