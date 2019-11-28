@@ -41,7 +41,7 @@
     background-color: lightblue;
 }
 
-.toolbar-panel button {
+.toolbar-panel .mxToolbarItem {
     border-radius: 4px;
     margin: 2px;
     margin-right: 4px;
@@ -54,7 +54,7 @@
     background-color: white;
 }
 
-.toolbar-panel button:hover {
+.toolbar-panel .mxToolbarItem:hover {
     border: 2px solid blue;
     box-shadow: 1px 1px 1px 1px rgba(63, 13, 138, 0.285);
     background-color: lightblue;
@@ -81,4 +81,8 @@
     background: white;
     border-style: solid;
     border-color: lightgray;
+}
+
+.hiden {
+    display: none;
 }

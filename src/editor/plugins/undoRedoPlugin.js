@@ -1,5 +1,14 @@
 var undoRedoPlugin = function(graph) {
     var undoManager = new mxUndoManager();
+
+    var undoFunc = function() {
+        undoManager.undo();
+    };
+
+    var redoFunc = function() {
+        undoManager.redo();
+    };
+
     return {
         init: function() {
             var listener = function(sender, event) {
@@ -8,15 +17,11 @@ var undoRedoPlugin = function(graph) {
             graph.getModel().addListener(mxEvent.UNDO, listener);
             graph.getView().addListener(mxEvent.UNDO, listener);
         },
-        getUndoButton: function(label) {
-            return mxUtils.button(label, function() {
-                undoManager.undo();
-            });
-        },
-        getRedoButton: function(label) {
-            return mxUtils.button(label, function() {
-                undoManager.redo();
-            });
+        undo: undoFunc,
+        redo: redoFunc,
+        addCommandsToToolbar: function(toolbar) {
+            toolbar.addItem('Undo', 'images/undo.gif', undoFunc);
+            toolbar.addItem('Redo', 'images/redo.gif', redoFunc);
         }
     };
 }

@@ -10,11 +10,13 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
 
         try {
             runConfigurationPlugin(configurationPlugin(graph));
-            runToolbarPluginPlugin(toolbarPlugin(mxClient, mxUtils, graph));
-            runZoomPlugin(zoomPlugin(mxUtils, graph));
-            runUndoRedoPlugin(undoRedoPlugin(graph));
-            runOutlinePlugin(outlinePlugin(graph));
-            addDeleteButton(mxEvent); //TODO: remove this later!
+            runShapesToolbarPluginPlugin(shapesToolbarPlugin(mxUtils, graph));
+
+            var commandsToolbar = toolbarPlugin().getNewToolbar(commandToolBarContainer);
+            runZoomPlugin(zoomPlugin(graph), commandsToolbar);
+            runUndoRedoPlugin(undoRedoPlugin(graph), commandsToolbar);
+            runOutlinePlugin(outlinePlugin(graph), commandsToolbar);
+            addDeleteButton(mxEvent, commandsToolbar); //TODO: remove this later!
         } catch (error) {
             console.error(error);
             return;
@@ -52,29 +54,27 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
 
         }
 
-        function runToolbarPluginPlugin(toolbarPlugin) {
-            toolbarPlugin.createToolbar(shapesToolBarContainer);
+        function runShapesToolbarPluginPlugin(shapesToolbarPlugin) {
+            shapesToolbarPlugin.createToolbar(shapesToolBarContainer);
         }
 
-        function runZoomPlugin(zoomPlugin) {
+        function runZoomPlugin(zoomPlugin, commandsToolbar) {
             zoomPlugin.setCenterZoom(graph);
-            commandToolBarContainer.appendChild(zoomPlugin.getZoomInButton('+'));
-            commandToolBarContainer.appendChild(zoomPlugin.getZoomOutButton('-'));
-            commandToolBarContainer.appendChild(zoomPlugin.getZoomActualButton('0'));
+            zoomPlugin.addCommandsToToolbar(commandsToolbar);
         }
 
-        function runUndoRedoPlugin(undoRedoPlugin) {
+        function runUndoRedoPlugin(undoRedoPlugin, commandsToolbar) {
             undoRedoPlugin.init();
-            commandToolBarContainer.appendChild(undoRedoPlugin.getUndoButton('undo'));
-            commandToolBarContainer.appendChild(undoRedoPlugin.getRedoButton('redo'));
+            undoRedoPlugin.addCommandsToToolbar(commandsToolbar);
         }
 
-        function runOutlinePlugin(outlinePlugin) {
+        function runOutlinePlugin(outlinePlugin, commandsToolbar) {
             outlinePlugin.init(outlineContainer);
+            outlinePlugin.addCommandsToToolbar(commandsToolbar);
         }
 
         //TODO: move to plugin
-        function addDeleteButton(mxEvent) {
+        function addDeleteButton(mxEvent, commandsToolbar) {
             var deleteFunc = function() {
                 graph.removeCells();
             };
