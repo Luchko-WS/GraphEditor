@@ -13,12 +13,8 @@ var shapesToolbarPlugin = function(mxUtils, graph) {
             addVertex('images/ellipse.gif', 100, 100, 'shape=ellipse');
             addVertex('images/rhombus.gif', 40, 40, 'shape=rhombus');
             addVertex('images/triangle.gif', 40, 40, 'shape=triangle');
-            addVertex('images/hexagon.gif', 100, 40, 'shape=hexagon');
 
             function addToolbarItem(graph, toolbar, prototype, image) {
-                // Function that is executed when the image is dropped on
-                // the graph. The cell argument points to the cell under
-                // the mousepointer if there is one.
                 var funct = function(graph, evt, cell, x, y) {
                     var vertex = graph.getModel().cloneCell(prototype);
                     vertex.geometry.x = x;

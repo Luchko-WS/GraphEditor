@@ -16,10 +16,10 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
 
             var commandsToolbar = toolbarPlugin().getNewToolbar(commandToolBarContainer);
             runCopyPastePlugin(copyPastePlugin(graph, mxEvent), commandsToolbar);
-            runOutlinePlugin(outlinePlugin(graph, outlineContainer), commandsToolbar);
+            runCellsManagementPlugin(cellsManagementPlugin(graph, mxEvent), commandsToolbar);
             runUndoRedoPlugin(undoRedoPlugin(graph), commandsToolbar);
             runZoomPlugin(zoomPlugin(graph), commandsToolbar);
-            addDeleteButton(mxEvent, commandsToolbar); //TODO: remove this later!
+            runOutlinePlugin(outlinePlugin(graph, outlineContainer), commandsToolbar);
         } catch (error) {
             console.error(error);
             return;
@@ -55,17 +55,16 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
             configurationPlugin.configureDynamicGrid(graphContainer, mxGraphView, document);
         }
 
-        function runCopyPastePlugin(copyPastePlugin, commandsToolbar) {
-            copyPastePlugin.addCommandsToToolbar(commandsToolbar);
-        }
-
         function runShapesToolbarPluginPlugin(shapesToolbarPlugin, shapesToolbar) {
             shapesToolbarPlugin.createToolbar(shapesToolbar);
         }
 
-        function runZoomPlugin(zoomPlugin, commandsToolbar) {
-            zoomPlugin.setCenterZoom(graph);
-            zoomPlugin.addCommandsToToolbar(commandsToolbar);
+        function runCopyPastePlugin(copyPastePlugin, commandsToolbar) {
+            copyPastePlugin.addCommandsToToolbar(commandsToolbar);
+        }
+
+        function runCellsManagementPlugin(cellsManagementPlugin, commandsToolbar) {
+            cellsManagementPlugin.addCommandsToToolbar(commandsToolbar);
         }
 
         function runUndoRedoPlugin(undoRedoPlugin, commandsToolbar) {
@@ -73,27 +72,13 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
             undoRedoPlugin.addCommandsToToolbar(commandsToolbar);
         }
 
-        function runOutlinePlugin(outlinePlugin, commandsToolbar) {;
-            outlinePlugin.addCommandsToToolbar(commandsToolbar);
+        function runZoomPlugin(zoomPlugin, commandsToolbar) {
+            zoomPlugin.setCenterZoom(graph);
+            zoomPlugin.addCommandsToToolbar(commandsToolbar);
         }
 
-        //TODO: move to plugin
-        function addDeleteButton(mxEvent, commandsToolbar) {
-            var deleteFunc = function() {
-                graph.removeCells();
-            };
-
-            commandToolBarContainer.appendChild(mxUtils.button('Delete', deleteFunc));
-            mxEvent.addListener(document, 'keydown', function(evt) { //change event listener target
-                // No dialog visible
-                var source = mxEvent.getSource(evt);
-
-                if (graph.isEnabled() && !graph.isMouseDown && !graph.isEditing() && source.nodeName != 'INPUT') {
-                    if (evt.keyCode == 46 /* Delete*/ ) {
-                        deleteFunc();
-                    }
-                }
-            });
+        function runOutlinePlugin(outlinePlugin, commandsToolbar) {;
+            outlinePlugin.addCommandsToToolbar(commandsToolbar);
         }
     }
 };

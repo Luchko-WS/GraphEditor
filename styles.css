@@ -66,6 +66,7 @@
 }
 
 .graph-container {
+    border-style: outset;
     overflow: auto;
     cursor: default;
 }
