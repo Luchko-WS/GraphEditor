@@ -1,14 +1,7 @@
 var shapesToolbarPlugin = function(mxUtils, graph) {
     return {
-        createToolbar: function(tbContainer) {
-            if (!tbContainer) {
-                console.error('Toolbar container is not created');
-                return;
-            }
-
-            // Creates new toolbar without event processing
-            var toolbar = new mxToolbar(tbContainer);
-            toolbar.enabled = false
+        createToolbar: function(toolbar) {
+            toolbar.enabled = false;
 
             var addVertex = function(icon, w, h, style) {
                 var vertex = new mxCell(null, new mxGeometry(0, 0, w, h), style);

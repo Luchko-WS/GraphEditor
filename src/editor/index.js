@@ -10,12 +10,15 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
 
         try {
             runConfigurationPlugin(configurationPlugin(graph));
-            runShapesToolbarPluginPlugin(shapesToolbarPlugin(mxUtils, graph));
+
+            var shapesToolbar = toolbarPlugin().getNewToolbar(shapesToolBarContainer);
+            runShapesToolbarPluginPlugin(shapesToolbarPlugin(mxUtils, graph), shapesToolbar);
 
             var commandsToolbar = toolbarPlugin().getNewToolbar(commandToolBarContainer);
-            runZoomPlugin(zoomPlugin(graph), commandsToolbar);
+            runCopyPastePlugin(copyPastePlugin(graph, mxEvent), commandsToolbar);
+            runOutlinePlugin(outlinePlugin(graph, outlineContainer), commandsToolbar);
             runUndoRedoPlugin(undoRedoPlugin(graph), commandsToolbar);
-            runOutlinePlugin(outlinePlugin(graph), commandsToolbar);
+            runZoomPlugin(zoomPlugin(graph), commandsToolbar);
             addDeleteButton(mxEvent, commandsToolbar); //TODO: remove this later!
         } catch (error) {
             console.error(error);
@@ -49,13 +52,15 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
         function runConfigurationPlugin(configurationPlugin) {
             configurationPlugin.configureControls(mxCellRenderer);
             configurationPlugin.configureConnections(mxGraph, mxShape, mxPolyline);
-            configurationPlugin.configureCopyAndPaste(mxEvent);
             configurationPlugin.configureDynamicGrid(graphContainer, mxGraphView, document);
-
         }
 
-        function runShapesToolbarPluginPlugin(shapesToolbarPlugin) {
-            shapesToolbarPlugin.createToolbar(shapesToolBarContainer);
+        function runCopyPastePlugin(copyPastePlugin, commandsToolbar) {
+            copyPastePlugin.addCommandsToToolbar(commandsToolbar);
+        }
+
+        function runShapesToolbarPluginPlugin(shapesToolbarPlugin, shapesToolbar) {
+            shapesToolbarPlugin.createToolbar(shapesToolbar);
         }
 
         function runZoomPlugin(zoomPlugin, commandsToolbar) {
@@ -68,8 +73,7 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
             undoRedoPlugin.addCommandsToToolbar(commandsToolbar);
         }
 
-        function runOutlinePlugin(outlinePlugin, commandsToolbar) {
-            outlinePlugin.init(outlineContainer);
+        function runOutlinePlugin(outlinePlugin, commandsToolbar) {;
             outlinePlugin.addCommandsToToolbar(commandsToolbar);
         }
 

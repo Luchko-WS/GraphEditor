@@ -9,6 +9,20 @@ var undoRedoPlugin = function(graph) {
         undoManager.redo();
     };
 
+    mxEvent.addListener(document, 'keydown', function(evt) {
+        // No dialog visible
+        var source = mxEvent.getSource(evt);
+        if (graph.isEnabled() && !graph.isMouseDown && !graph.isEditing()) {
+            if (evt.ctrlKey) {
+                if (evt.keyCode == 90 /* Z */ ) {
+                    undoFunc();
+                } else if (evt.keyCode == 89 /* Y */ ) {
+                    redoFunc();
+                }
+            }
+        }
+    });
+
     return {
         init: function() {
             var listener = function(sender, event) {
