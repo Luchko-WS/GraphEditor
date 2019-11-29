@@ -97,3 +97,7 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
         }
     }
 };
+
+/*NOTES
+LOOK AT  mxEditor
+*/
