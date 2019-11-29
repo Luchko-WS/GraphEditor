@@ -1,4 +1,4 @@
-var copyPastePlugin = function(graph, mxEvent) {
+var copyPastePlugin = function(graph) {
     var copyFunc = function() {
         mxClipboard.copy(graph, graph.getSelectionCells());
     };

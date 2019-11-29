@@ -1,4 +1,4 @@
-var cellsManagementPlugin = function(graph, mxEvent) {
+var cellsManagementPlugin = function(graph) {
     var deleteFunc = function() {
         graph.removeCells();
     };

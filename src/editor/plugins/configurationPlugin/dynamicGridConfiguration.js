@@ -3,6 +3,11 @@ var configureDynamicGrid = function(graph) {
         const GRID_IMAGE_URL = '../../../images/grid.gif';
         graph.graphHandler.scaleGrid = true;
 
+        //on resize
+        mxEvent.addListener(window, 'resize', function() {
+            graph.refresh();
+        })
+
         try {
             var canvas = document.createElement('canvas');
             canvas.style.position = 'absolute';

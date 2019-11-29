@@ -1,4 +1,4 @@
-var shapesToolbarPlugin = function(mxUtils, graph) {
+var shapesToolbarPlugin = function(graph) {
     return {
         createToolbar: function(toolbar) {
             toolbar.enabled = false;

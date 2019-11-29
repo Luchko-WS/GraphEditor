@@ -12,11 +12,11 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
             runConfigurationPlugin(configurationPlugin(graph));
 
             var shapesToolbar = toolbarPlugin().getNewToolbar(shapesToolBarContainer);
-            runShapesToolbarPluginPlugin(shapesToolbarPlugin(mxUtils, graph), shapesToolbar);
+            runShapesToolbarPluginPlugin(shapesToolbarPlugin(graph), shapesToolbar);
 
             var commandsToolbar = toolbarPlugin().getNewToolbar(commandToolBarContainer);
-            runCopyPastePlugin(copyPastePlugin(graph, mxEvent), commandsToolbar);
-            runCellsManagementPlugin(cellsManagementPlugin(graph, mxEvent), commandsToolbar);
+            runCopyPastePlugin(copyPastePlugin(graph), commandsToolbar);
+            runCellsManagementPlugin(cellsManagementPlugin(graph), commandsToolbar);
             runUndoRedoPlugin(undoRedoPlugin(graph), commandsToolbar);
             runZoomPlugin(zoomPlugin(graph), commandsToolbar);
             runOutlinePlugin(outlinePlugin(graph, outlineContainer), commandsToolbar);
@@ -50,7 +50,6 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
         graph.getModel().endUpdate();
 
         function runConfigurationPlugin(configurationPlugin) {
-            configurationPlugin.configureControls(mxCellRenderer);
             configurationPlugin.configureConnections(mxGraph, mxShape, mxPolyline);
             configurationPlugin.configureDynamicGrid(graphContainer, mxGraphView, document);
         }

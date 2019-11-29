@@ -69,6 +69,7 @@
     border-style: outset;
     overflow: auto;
     cursor: default;
+    height: 90vh;
 }
 
 .outline-container {
