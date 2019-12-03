@@ -19,6 +19,8 @@
     <script type="text/javascript" src="src/editor/plugins/outlinePlugin.js"></script>
     <script type="text/javascript" src="src/editor/plugins/copyPastePlugin.js"></script>
     <script type="text/javascript" src="src/editor/plugins/cellsManagementPlugin.js"></script>
+    <script type="text/javascript" src="src/editor/plugins/exportPlugin.js"></script>
+    <script type="text/javascript" src="src/editor/plugins/colorsPlugin.js"></script>
     <script type="text/javascript" src="src/editor/index.js"></script>
 </head>
 
@@ -26,7 +28,8 @@
         document.getElementById('graphContainer'),
         document.getElementById('shapesToolBarContainer'),
         document.getElementById('commandToolBarContainer'),
-        document.getElementById('outlineContainer')
+        document.getElementById('outlineContainer'),
+        document.getElementById('colorsToolBarContainer')
     )">
 
     <div class="grapheditor-container">
@@ -38,6 +41,10 @@
             <div class="toolbar-panel-group">
                 <div>Commands</div>
                 <div id="commandToolBarContainer"></div>
+            </div>
+            <div class="toolbar-panel-group">
+                <div>Colors</div>
+                <div id="colorsToolBarContainer"></div>
             </div>
         </div>
         <div class="graph-layer">

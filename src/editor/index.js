@@ -1,4 +1,10 @@
-var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarContainer, outlineContainer) {
+var runApp = function(
+    graphContainer,
+    shapesToolBarContainer,
+    commandToolBarContainer,
+    outlineContainer,
+    colorsToolBarContainer) {
+
     if (!mxClient.isBrowserSupported()) {
         mxUtils.error('Browser is not supported!', 200, false);
     } else {
@@ -20,6 +26,10 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
             runUndoRedoPlugin(undoRedoPlugin(graph), commandsToolbar);
             runZoomPlugin(zoomPlugin(graph), commandsToolbar);
             runOutlinePlugin(outlinePlugin(graph, outlineContainer), commandsToolbar);
+            runExportPlugin(exportPlugin(graph), commandsToolbar);
+
+            var colorsToolbar = toolbarPlugin().getNewToolbar(colorsToolBarContainer);
+            runColorsPlugin(colorsPlugin(graph), colorsToolbar);
         } catch (error) {
             console.error(error);
             return;
@@ -78,6 +88,14 @@ var runApp = function(graphContainer, shapesToolBarContainer, commandToolBarCont
 
         function runOutlinePlugin(outlinePlugin, commandsToolbar) {;
             outlinePlugin.addCommandsToToolbar(commandsToolbar);
+        }
+
+        function runExportPlugin(exportPlugin, commandsToolbar) {;
+            exportPlugin.addCommandsToToolbar(commandsToolbar);
+        }
+
+        function runColorsPlugin(colorsPlugin, colorsToolBarContainer) {
+            colorsPlugin.addCommandsToToolbar(colorsToolBarContainer);
         }
     }
 };
