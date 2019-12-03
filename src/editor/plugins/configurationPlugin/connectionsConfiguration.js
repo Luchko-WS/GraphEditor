@@ -2,8 +2,7 @@ var configureConnections = function(graph) {
     return function(mxGraph, mxShape, mxPolyline) {
         graph.setConnectable(true);
         // Specifies the default edge style
-        graph.getStylesheet().getDefaultEdgeStyle()['edgeStyle'] = 'orthogonalEdgeStyle';
-
+        graph.getStylesheet().getDefaultEdgeStyle()['edgeStyle'] = 'loopEdgeStyle';
         mxGraph.prototype.getAllConnectionConstraints = function(terminal, source) {
             if (terminal != null && terminal.shape != null) {
                 if (terminal.shape.stencil != null) {
