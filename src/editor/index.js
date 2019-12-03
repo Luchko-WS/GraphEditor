@@ -17,9 +17,6 @@ var runApp = function(
         try {
             runConfigurationPlugin(configurationPlugin(graph));
 
-            var shapesToolbar = toolbarPlugin().getNewToolbar(shapesToolBarContainer);
-            runShapesToolbarPluginPlugin(shapesToolbarPlugin(graph), shapesToolbar);
-
             var commandsToolbar = toolbarPlugin().getNewToolbar(commandToolBarContainer);
             runCopyPastePlugin(copyPastePlugin(graph), commandsToolbar);
             runCellsManagementPlugin(cellsManagementPlugin(graph), commandsToolbar);
@@ -29,7 +26,11 @@ var runApp = function(
             runExportPlugin(exportPlugin(graph), commandsToolbar);
 
             var colorsToolbar = toolbarPlugin().getNewToolbar(colorsToolBarContainer);
-            runColorsPlugin(colorsPlugin(graph), colorsToolbar);
+            var colPlugin = colorsPlugin(graph);
+            runColorsPlugin(colPlugin, colorsToolbar);
+
+            var shapesToolbar = toolbarPlugin().getNewToolbar(shapesToolBarContainer);
+            runShapesToolbarPluginPlugin(shapesToolbarPlugin(graph, colPlugin), shapesToolbar);
         } catch (error) {
             console.error(error);
             return;

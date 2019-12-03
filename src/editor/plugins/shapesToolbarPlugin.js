@@ -1,4 +1,4 @@
-var shapesToolbarPlugin = function(graph) {
+var shapesToolbarPlugin = function(graph, colorsPlugin) {
     return {
         createToolbar: function(toolbar) {
             toolbar.enabled = false;
@@ -9,10 +9,10 @@ var shapesToolbarPlugin = function(graph) {
                 addToolbarItem(graph, toolbar, vertex, icon);
             };
 
-            addVertex('images/rectangle.gif', 100, 40, '');
-            addVertex('images/ellipse.gif', 100, 100, 'shape=ellipse');
-            addVertex('images/rhombus.gif', 40, 40, 'shape=rhombus');
-            addVertex('images/triangle.gif', 40, 40, 'shape=triangle');
+            addVertex('images/rectangle.gif', 100, 70, '');
+            addVertex('images/ellipse.gif', 80, 80, 'shape=ellipse');
+            addVertex('images/rhombus.gif', 80, 80, 'shape=rhombus');
+            addVertex('images/triangle.gif', 80, 80, 'shape=triangle');
 
             function addToolbarItem(graph, toolbar, prototype, image) {
                 var funct = function(graph, evt, cell, x, y) {
@@ -22,6 +22,7 @@ var shapesToolbarPlugin = function(graph) {
 
                     graph.addCell(vertex);
                     graph.setSelectionCell(vertex);
+                    colorsPlugin.setDefaultStyle();
                 }
 
                 // Creates the image which is used as the drag icon (preview)
