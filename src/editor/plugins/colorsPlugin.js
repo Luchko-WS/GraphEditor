@@ -1,9 +1,16 @@
 var colorsPlugin = function(graph) {
 
     var fillFunc = function(fillColor, fontColor) {
-        var selectedCells = graph.getSelectionCell();
-        graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, fillColor, [selectedCells]);
-        graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, fontColor, [selectedCells]);
+        var selectedCells = graph.getSelectionCells();
+        for (var i = 0; i < selectedCells.length; i++) {
+            var cell = selectedCells[i];
+            if (cell.edge) {
+                graph.setCellStyles(mxConstants.STYLE_STROKECOLOR, fillColor, [cell]);
+            } else if (cell.vertex) {
+                graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, fillColor, [cell]);
+                graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, fontColor, [cell]);
+            }
+        }
     }
 
     var fillRedFunc = function() {
