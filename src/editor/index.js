@@ -26,8 +26,8 @@ var runApp = function(
             runExportPlugin(exportPlugin(graph), commandsToolbar);
 
             var colorsToolbar = toolbarPlugin().getNewToolbar(colorsToolBarContainer);
-            var colPlugin = colorsPlugin(graph);
-            runColorsPlugin(colPlugin, colorsToolbar);
+            var colPlugin = stylesPlugin(graph);
+            runStylesPlugin(colPlugin, colorsToolbar);
 
             var shapesToolbar = toolbarPlugin().getNewToolbar(shapesToolBarContainer);
             runShapesToolbarPluginPlugin(shapesToolbarPlugin(graph, colPlugin), shapesToolbar);
@@ -92,11 +92,11 @@ var runApp = function(
         }
 
         function runExportPlugin(exportPlugin, commandsToolbar) {;
-            exportPlugin.addCommandsToToolbar(commandsToolbar);
+            //exportPlugin.addCommandsToToolbar(commandsToolbar);
         }
 
-        function runColorsPlugin(colorsPlugin, colorsToolBarContainer) {
-            colorsPlugin.addCommandsToToolbar(colorsToolBarContainer);
+        function runStylesPlugin(stylesPlugin, stylesToolBarContainer) {
+            stylesPlugin.addCommandsToToolbar(stylesToolBarContainer);
         }
     }
 };

@@ -9,7 +9,7 @@ var shapesToolbarPlugin = function(graph, colorsPlugin) {
                 addToolbarItem(graph, toolbar, vertex, icon);
             };
 
-            addVertex('images/rectangle.gif', 100, 70, '');
+            addVertex('images/rectangle.gif', 120, 70, 'shape=rounded');
             addVertex('images/ellipse.gif', 80, 80, 'shape=ellipse');
             addVertex('images/rhombus.gif', 80, 80, 'shape=rhombus');
             addVertex('images/triangle.gif', 80, 80, 'shape=triangle');

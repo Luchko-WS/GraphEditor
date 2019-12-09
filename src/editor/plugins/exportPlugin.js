@@ -1,32 +1,21 @@
 var exportPlugin = function(graph) {
-    var exportImgFunc = function() {
-        /*var xmlDoc = mxUtils.createXmlDocument();
-        var root = xmlDoc.createElement('output');
-        xmlDoc.appendChild(root);
-
-        var xmlCanvas = new mxXmlCanvas2D(root);
-        var imgExport = new mxImageExport();
-        imgExport.drawState(graph.getView().getState(graph.model.root), xmlCanvas);
-
-        var bounds = graph.getGraphBounds();
-        var w = Math.ceil(bounds.x + bounds.width);
-        var h = Math.ceil(bounds.y + bounds.height);
-
-        var xml = mxUtils.getXml(root);
-        console.log(xml);*/
-        /*new mxXmlRequest('export', 'format=png&w=' + w +
-                '&h=' + h + '&bg=#F9F7ED&xml=' + encodeURIComponent(xml))
-            .simulate(document, '_blank');*/
-
-        /*var outputSvg = graph.getSvg("#FFFFFF", 1, null, null, true, null, null);
-        console.log(outputSvg);*/
+    var exportXmlFunc = function() {
+        var encoder = new mxCodec();
+        var node = encoder.encode(graph.getModel());
+        window.importData = mxUtils.getPrettyXml(node);
+        mxUtils.popup(mxUtils.getPrettyXml(node), true);
     };
+
+    var importXmlFunc = function() {
+        var xml = window.importData;
+        var dec = new mxCodec(xml);
+        dec.decode(xml, graph.getModel());
+    }
 
     return {
         addCommandsToToolbar: function(toolbar) {
-            /*toolbar.addItem('Save image', 'images/export.gif', exportImgFunc);*/
+            toolbar.addItem('Export', 'images/save.gif', exportXmlFunc);
+            toolbar.addItem('Import', 'images/diagram.gif', importXmlFunc);
         }
     };
-
-    //mxUtils.show(editor.graph, null, 10, 10);
 }

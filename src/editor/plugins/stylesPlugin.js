@@ -1,4 +1,4 @@
-var colorsPlugin = function(graph) {
+var stylesPlugin = function(graph) {
 
     var fillFunc = function(fillColor, fontColor) {
         var selectedCells = graph.getSelectionCells();
@@ -9,6 +9,7 @@ var colorsPlugin = function(graph) {
             } else if (cell.vertex) {
                 graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, fillColor, [cell]);
                 graph.setCellStyles(mxConstants.STYLE_FONTCOLOR, fontColor, [cell]);
+                graph.setCellStyles(mxConstants.STYLE_ROUNDED, 1, [cell]);
             }
         }
     }
@@ -29,6 +30,10 @@ var colorsPlugin = function(graph) {
         fillFunc('#3671bf', 'white');
     }
 
+    var fillGrayFunc = function() {
+        fillFunc('gray', 'white');
+    }
+
     return {
         setDefaultStyle: fillBlueFunc,
         addCommandsToToolbar: function(toolbar) {
@@ -36,6 +41,7 @@ var colorsPlugin = function(graph) {
             toolbar.addItem('Fill green', 'images/green.gif', fillGreenFunc);
             toolbar.addItem('Fill yellow', 'images/yellow.gif', fillYellowFunc);
             toolbar.addItem('Fill blue', 'images/blue.gif', fillBlueFunc);
+            toolbar.addItem('Fill gray', 'images/gray.gif', fillGrayFunc);
         }
     };
 }
